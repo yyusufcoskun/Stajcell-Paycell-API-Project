@@ -35,6 +35,26 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	
+	/************ */
+	implementation 'org.springframework.boot:spring-boot-starter:2.6.0'
+	
+	//implementation 'ch.qos.logback:logback-classic:1.2.6'
+
+	//implementation 'org.slf4j:slf4j-api:1.7.32'
+	implementation 'org.apache.logging.log4j:log4j-api:2.20.0'
+	implementation 'org.apache.logging.log4j:log4j-core:2.20.0'
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
+	
+	//Aspect
+	//implementation 'org.springframework.cache.annotation.Cacheable'
+	//implementation 'org.springframework.cache.annotation.CacheEvict'
+	//Actuator(cache'deki istatistikler için)
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	//CacheManager cache sağlayıcısı= Caffeine
+    implementation 'com.github.ben-manes.caffeine:caffeine:2.9.0'
+
 }
 
 tasks.named('test') {

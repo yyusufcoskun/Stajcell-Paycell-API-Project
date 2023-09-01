@@ -8,6 +8,7 @@ class StajcellApiProjectApplicationTests {
 
 	@Test
 	void contextLoads() {
+		
 	}
 
 }

@@ -1,7 +1,9 @@
 package com.StajcellProject.Stajcell.API.Project.service;
 
 import com.StajcellProject.Stajcell.API.Project.model.Task;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +16,11 @@ import java.util.List;
 
 @Service
 public class TaskServiceImpl implements TaskService {
-        private final String apiUrl = "https://jsonplaceholder.typicode.com/todos";
+        private final String apiUrl = "https://jsonplaceholder.typicode.com/todos"; // Spring boot config server client. kodun içinden url'i kaldir.
         private final RestTemplate restTemplate;
 
+        @Autowired
+        CacheManager cacheManager;
         public TaskServiceImpl(RestTemplateBuilder restTemplateBuilder) {
             this.restTemplate = restTemplateBuilder.build();
         }
@@ -31,7 +35,13 @@ public class TaskServiceImpl implements TaskService {
         @CacheEvict(value = "tasksCache", allEntries = true)
         @Scheduled(fixedRateString = "${caching.spring.taskTTL}")
         public void emptyTasksCache() {
+
             System.out.println("Emptying cache...");
         }
-    }
+
+        public void clearAllCacheValues(String tasksCache) {
+            System.out.println("Emptying cache manually...");
+            cacheManager.getCache(tasksCache).clear();
+        }
+}
 

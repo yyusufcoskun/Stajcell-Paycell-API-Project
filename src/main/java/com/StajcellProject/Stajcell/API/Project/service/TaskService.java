@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface TaskService {
     List<Task> getAllTasks();
-     void emptyTasksCache();
+    void emptyTasksCache();
+    void clearAllCacheValues(String tasksCache);
 }

@@ -5,9 +5,11 @@
 </head>
 <body>
 <h1>Task List</h1>
-<form method="post" action="tasks/clear">
+<form method="post" action="/tasks/clear">
+    <!-- <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"> -->
     <button type="submit">Clear Cache</button>
 </form>
+
 <table>
     <thead>
     <tr>

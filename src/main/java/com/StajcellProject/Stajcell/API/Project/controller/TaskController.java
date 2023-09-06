@@ -33,10 +33,10 @@ public class TaskController {
         return "task-list";
     }
 
-    @PostMapping("tasks/clear")
+    @PostMapping("/tasks/clear")
     public String clearAllCacheValues(Model model) {
         taskService.clearAllCacheValues("tasksCache");
-        return "redirect:/";
+        return "redirect:/tasks";
     }
 
 }

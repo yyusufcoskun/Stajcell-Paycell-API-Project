@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-
+import org.springframework.web.bind.annotation.RequestParam; 
 
 import java.util.List;
 
@@ -27,12 +27,27 @@ public class TaskController {
     }
 
     @GetMapping("/tasks")
-    public String listTasks(Model model) {
-        List<Task> tasks = taskService.getAllTasks();
+    public String listTasks(
+        Model model,
+        @RequestParam(name = "filter", required = false, defaultValue = "all") String filterCriteria
+    ) {
+        List<Task> tasks;
+    
+        if ("completed".equals(filterCriteria)) {
+            // Filter tasks to show only completed tasks
+            tasks = taskService.getCompletedTasks();
+        } else if ("incomplete".equals(filterCriteria)) {
+            // Filter tasks to show only incomplete tasks
+            tasks = taskService.getIncompleteTasks();
+        } else {
+            // Default: Show all tasks
+            tasks = taskService.getAllTasks();
+        }
+    
         model.addAttribute("tasks", tasks);
         return "task-list";
-    }
-
+    } 
+    
     @PostMapping("tasks/clear")
     public String clearAllCacheValues(Model model) {
         taskService.clearAllCacheValues("tasksCache");

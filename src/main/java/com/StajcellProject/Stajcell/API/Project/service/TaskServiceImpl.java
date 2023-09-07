@@ -11,8 +11,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+
 import java.util.Arrays;
 import java.util.List;
+import java.util.ArrayList;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -43,5 +45,26 @@ public class TaskServiceImpl implements TaskService {
             System.out.println("Emptying cache manually...");
             cacheManager.getCache(tasksCache).clear();
         }
+
+         // Existing code...
+
+    public List<Task> getCompletedTasks() {
+        List<Task> allTasks = getAllTasks();
+        List<Task> completedTasks = new ArrayList<>();
+
+        // Filter the completed tasks from all tasks
+        for (Task task : allTasks) {
+            if (task.isCompleted()) {  // Assuming you have a method to check completion status
+                completedTasks.add(task);
+            }
+        }
+
+        return completedTasks;
+    }
+    //** */
+    @Override
+        public List<Task> getIncompleteTasks() {
+            return null;
+        } 
 }
 

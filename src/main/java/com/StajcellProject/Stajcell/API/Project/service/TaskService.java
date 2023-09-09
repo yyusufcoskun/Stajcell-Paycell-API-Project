@@ -11,4 +11,9 @@ public interface TaskService {
 
     List<Task> getCompletedTasks();
     List<Task> getIncompleteTasks(); 
+
+    List<Task> getTasksByUserIds(List<Long> userIds);//009
+    List<Task> getCompletedTasksByUserIds(List<Long> userIds);//009
+    List<Task> getIncompleteTasksByUserIds(List<Long> userIds);//009
+
 }

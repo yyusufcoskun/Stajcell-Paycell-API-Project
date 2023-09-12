@@ -1,6 +1,9 @@
 package com.StajcellProject.Stajcell.API.Project.model;
-import lombok.*;
 
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor

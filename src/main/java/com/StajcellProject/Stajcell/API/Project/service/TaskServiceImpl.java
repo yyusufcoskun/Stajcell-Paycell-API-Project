@@ -13,7 +13,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.ArrayList;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -34,7 +33,6 @@ public class TaskServiceImpl implements TaskService {
         Task[] tasks = response.getBody();
         return Arrays.asList(tasks);
     }
-
     @CacheEvict(value = "tasksCache", allEntries = true)
     @Scheduled(fixedRateString = "${caching.spring.taskTTL}")
     public void emptyTasksCache() {
@@ -46,71 +44,29 @@ public class TaskServiceImpl implements TaskService {
         cacheManager.getCache(tasksCache).clear();
     }
 
-    public List<Task> getCompletedTasks() {
-        List<Task> allTasks = getAllTasks();
-        List<Task> completedTasks = new ArrayList<>();
-
-        for (Task task : allTasks) {
-            if (task.isCompleted()) {
-                completedTasks.add(task);
-            }
-        }
-
-        return completedTasks;
+    @Cacheable("tasksCache")
+    public Task getTasksById(Long id) {
+        System.out.println("Getting tasks from API for filtering process...");
+        ResponseEntity<Task> response = restTemplate.getForEntity(apiUrl + "/" + id, Task.class);
+        Task task = response.getBody();
+        return task;
     }
 
-    @Override
-    public List<Task> getIncompleteTasks() {
-        List<Task> allTasks = getAllTasks();
-        List<Task> incompleteTasks = new ArrayList<>();
-
-        for (Task task : allTasks) {
-            if (!task.isCompleted()) {
-                incompleteTasks.add(task);
-            }
-        }
-
-        return incompleteTasks;
+    @Cacheable("tasksCache")
+    public List<Task> getTasksByUser(Long userId) {
+        System.out.println("Getting tasks from API for filtering process...");
+        ResponseEntity<Task[]> response = restTemplate.getForEntity(apiUrl + "?userId=" + userId, Task[].class);
+        Task[] tasks = response.getBody();
+        return Arrays.asList(tasks);
     }
 
-    public List<Task> getTasksByUserIds(List<Long> userIds) {
-        List<Task> allTasks = getAllTasks();
-        List<Task> filteredTasks = new ArrayList<>();
-
-        for (Task task : allTasks) {
-            if (userIds.contains(task.getUserId())) {
-                filteredTasks.add(task);
-            }
-        }
-
-        return filteredTasks;
+    @Cacheable("tasksCache")
+    public List<Task> getTasksByCompletion(boolean completed) {
+        System.out.println("Getting tasks from API for filtering process...");
+        ResponseEntity<Task[]> response = restTemplate.getForEntity(apiUrl + "?completed=" + completed, Task[].class);
+        Task[] tasks = response.getBody();
+        return Arrays.asList(tasks);
     }
 
-    @Override
-    public List<Task> getCompletedTasksByUserIds(List<Long> userIds) {
-        List<Task> allTasks = getAllTasks();
-        List<Task> completedTasks = new ArrayList<>();
-
-        for (Task task : allTasks) {
-            if (userIds.contains(task.getUserId()) && task.isCompleted()) {
-                completedTasks.add(task);
-            }
-        }
-
-        return completedTasks;
-    }
-
-    @Override
-    public List<Task> getIncompleteTasksByUserIds(List<Long> userIds) {
-        List<Task> allTasks = getAllTasks();
-        List<Task> incompleteTasks = new ArrayList<>();
-
-        for (Task task : allTasks) {
-            if (userIds.contains(task.getUserId()) && !task.isCompleted()) {
-                incompleteTasks.add(task);
-            }
-        }
-
-        return incompleteTasks;
-    }
 }
+

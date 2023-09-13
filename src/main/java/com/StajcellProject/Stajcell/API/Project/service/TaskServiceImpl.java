@@ -10,10 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -34,7 +35,6 @@ public class TaskServiceImpl implements TaskService {
         Task[] tasks = response.getBody();
         return Arrays.asList(tasks);
     }
-
     @CacheEvict(value = "tasksCache", allEntries = true)
     @Scheduled(fixedRateString = "${caching.spring.taskTTL}")
     public void emptyTasksCache() {
@@ -46,71 +46,63 @@ public class TaskServiceImpl implements TaskService {
         cacheManager.getCache(tasksCache).clear();
     }
 
-    public List<Task> getCompletedTasks() {
-        List<Task> allTasks = getAllTasks();
-        List<Task> completedTasks = new ArrayList<>();
+    @Cacheable("tasksCache")
+    public Task getTasksById(Long id) {
+        System.out.println("Getting tasks from API for filtering process...");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(apiUrl)
+                .pathSegment(String.valueOf(id));
+        ResponseEntity<Task> response = restTemplate.getForEntity(builder.toUriString(), Task.class);
 
-        for (Task task : allTasks) {
-            if (task.isCompleted()) {
-                completedTasks.add(task);
-            }
-        }
-
-        return completedTasks;
+        //ResponseEntity<Task> response = restTemplate.getForEntity(apiUrl + "/" + id, Task.class); Dead code, use in case of emergency
+        Task task = response.getBody();
+        return task;
     }
 
-    @Override
-    public List<Task> getIncompleteTasks() {
+    @Cacheable("tasksCache")
+    public List<Task> getTasksByFilters(Long userId, Boolean completed) {
         List<Task> allTasks = getAllTasks();
-        List<Task> incompleteTasks = new ArrayList<>();
 
-        for (Task task : allTasks) {
-            if (!task.isCompleted()) {
-                incompleteTasks.add(task);
-            }
+        if (userId != null) {
+            allTasks = allTasks.stream()
+                    .filter(task -> task.getUserId().equals(userId))
+                    .collect(Collectors.toList());
         }
 
-        return incompleteTasks;
-    }
-
-    public List<Task> getTasksByUserIds(List<Long> userIds) {
-        List<Task> allTasks = getAllTasks();
-        List<Task> filteredTasks = new ArrayList<>();
-
-        for (Task task : allTasks) {
-            if (userIds.contains(task.getUserId())) {
-                filteredTasks.add(task);
-            }
+        if (completed != null) {
+            allTasks = allTasks.stream()
+                    .filter(task -> task.isCompleted() == completed)
+                    .collect(Collectors.toList());
         }
 
-        return filteredTasks;
+        return allTasks;
+    }
+/*
+    @Cacheable("tasksCache")
+    public List<Task> getTasksByUser(Long userId) {
+        System.out.println("Getting tasks from API for filtering process...");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(apiUrl)
+                .queryParam("userId", userId);
+        ResponseEntity<Task[]> response = restTemplate.getForEntity(builder.toUriString(), Task[].class);
+
+        //ResponseEntity<Task[]> response = restTemplate.getForEntity(apiUrl + "?userId=" + userId, Task[].class); Dead code, use in case of emergency
+        Task[] tasks = response.getBody();
+        return Arrays.asList(tasks);
     }
 
-    @Override
-    public List<Task> getCompletedTasksByUserIds(List<Long> userIds) {
-        List<Task> allTasks = getAllTasks();
-        List<Task> completedTasks = new ArrayList<>();
+    @Cacheable("tasksCache")
+    public List<Task> getTasksByCompletion(boolean completed) {
+        System.out.println("Getting tasks from API for filtering process...");
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(apiUrl)
+                .queryParam("completed", completed);
+        ResponseEntity<Task[]> response = restTemplate.getForEntity(builder.toUriString(), Task[].class);
 
-        for (Task task : allTasks) {
-            if (userIds.contains(task.getUserId()) && task.isCompleted()) {
-                completedTasks.add(task);
-            }
-        }
-
-        return completedTasks;
+        //ResponseEntity<Task[]> response = restTemplate.getForEntity(apiUrl + "?completed=" + completed, Task[].class); Dead code, use in case of emergency
+        Task[] tasks = response.getBody();
+        return Arrays.asList(tasks);
     }
-
-    @Override
-    public List<Task> getIncompleteTasksByUserIds(List<Long> userIds) {
-        List<Task> allTasks = getAllTasks();
-        List<Task> incompleteTasks = new ArrayList<>();
-
-        for (Task task : allTasks) {
-            if (userIds.contains(task.getUserId()) && !task.isCompleted()) {
-                incompleteTasks.add(task);
-            }
-        }
-
-        return incompleteTasks;
-    }
+*/
 }
+

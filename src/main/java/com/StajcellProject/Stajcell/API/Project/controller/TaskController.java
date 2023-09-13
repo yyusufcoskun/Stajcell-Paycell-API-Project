@@ -21,25 +21,9 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-/*
-    @GetMapping("/tasks")
-    public void listTasks(Model model) {
-        List<Task> tasks = taskService.getAllTasks();
-        model.addAttribute("tasks", tasks);
-        return "task-list";
-    }
-*/
-
-    @GetMapping("/api/tasks")
-    public ResponseEntity<List<Task>> listTasks() {
-        List<Task> tasks = taskService.getAllTasks();
-        return ResponseEntity.ok(tasks);
-    }
-
-    @PostMapping("/api/clear")
-    public void clearAllCacheValues(Model model) {
+    @GetMapping("/api/clear")
+    public void clearAllCacheValues(String tasksCache) {
         taskService.clearAllCacheValues("tasksCache");
-       // return "redirect:/";
     }
 
     @GetMapping("/api/tasks/{id}")
@@ -48,6 +32,49 @@ public class TaskController {
         return taskService.getTasksById(id);
     }
 
+    @GetMapping("/api/tasks")
+    @ResponseBody
+    public ResponseEntity<List<Task>> getTasksByFilters(
+            @RequestParam(required = false) Long userId,
+            @RequestParam(required = false) Boolean completed) {
+
+        List<Task> tasks = taskService.getTasksByFilters(userId, completed);
+        return ResponseEntity.ok(tasks);
+    }
+
+
+/*
+    @GetMapping("/tasks")
+    public void listTasks(Model model) {
+        List<Task> tasks = taskService.getAllTasks();
+        model.addAttribute("tasks", tasks);
+        return "task-list";
+    }
+*//*
+    @GetMapping("/api/tasks")
+    public ResponseEntity<List<Task>> listTasks() {
+        List<Task> tasks = taskService.getAllTasks();
+        return ResponseEntity.ok(tasks);
+    }
+
+*//*
+    @GetMapping("/api/tasks")
+    @ResponseBody
+    public ResponseEntity<List<Task>> getTasksByFilters(
+            @RequestParam(required = false) Long userId,
+            @RequestParam(required = false) Boolean completed
+    ) {
+        List<Task> tasks = taskService.getAllTasks();
+
+        if (userId != null) {
+            tasks = tasks.stream().filter(task -> task.getUserId().equals(userId)).collect(Collectors.toList());
+        }
+        if (completed != null) {
+            tasks = tasks.stream().filter(task -> task.isCompleted() == completed).collect(Collectors.toList());
+        }
+        return ResponseEntity.ok(tasks);
+    }
+*//*
     @GetMapping("/api/tasks/users/{userId}")
     @ResponseBody
     public ResponseEntity<List<Task>> getTasksByUser(@PathVariable Long userId) {
@@ -61,4 +88,5 @@ public class TaskController {
         List<Task> tasks = taskService.getTasksByCompletion(completed);
         return ResponseEntity.ok(tasks);
     }
+*/
 }

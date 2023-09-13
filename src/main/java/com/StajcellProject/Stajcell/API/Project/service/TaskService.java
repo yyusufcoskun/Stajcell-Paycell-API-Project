@@ -8,4 +8,11 @@ public interface TaskService {
     List<Task> getAllTasks();
     void emptyTasksCache();
     void clearAllCacheValues(String tasksCache);
+    Task getTasksById(Long id);
+    List<Task> getTasksByFilters(Long userId, Boolean completed);
+
+    /*
+    List<Task> getTasksByUser(Long userId);
+    List<Task> getTasksByCompletion(boolean completed);
+     */
 }

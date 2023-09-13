@@ -10,6 +10,17 @@
     <button type="submit">Clear Cache</button>
 </form>
 
+<form method="get" action="/tasks">
+    <label for="filterCriteria">Filter By:</label>
+    <select id="filterCriteria" name="filter">
+        <option value="all">All</option>
+        <option value="completed">Completed</option>
+        <option value="incomplete">Incomplete</option>
+    </select>
+    <input type="text" id="userIds" name="userIds" placeholder="User IDs (comma separated)">
+    <button type="submit">Apply Filter</button>
+    
+</form>
 <table>
     <thead>
     <tr>

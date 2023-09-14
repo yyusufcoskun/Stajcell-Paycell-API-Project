@@ -56,7 +56,6 @@ public class TaskController {
         List<Task> tasks = taskService.getAllTasks();
         return ResponseEntity.ok(tasks);
     }
-
 *//*
     @GetMapping("/api/tasks")
     @ResponseBody

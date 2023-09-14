@@ -5,9 +5,11 @@
 </head>
 <body>
 <h1>Task List</h1>
-<form method="post" action="tasks/clear">
+<form method="post" action="/tasks/clear">
+    <!-- <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"> -->
     <button type="submit">Clear Cache</button>
 </form>
+
 <form method="get" action="/tasks">
     <label for="filterCriteria">Filter By:</label>
     <select id="filterCriteria" name="filter">
@@ -15,11 +17,10 @@
         <option value="completed">Completed</option>
         <option value="incomplete">Incomplete</option>
     </select>
-    
     <input type="text" id="userIds" name="userIds" placeholder="User IDs (comma separated)">
     <button type="submit">Apply Filter</button>
     
-</form> 
+</form>
 <table>
     <thead>
     <tr>

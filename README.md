@@ -4,6 +4,8 @@ This project is a [Spring Boot](https://spring.io/) MVC API project created for 
 - Caching
 - Basic authentication
 
+Also, ImpactAnalyzer.py is the prototype for an API Change Impact Analyzer, which scrapes GitHub code to detect endpoint usage.
+
 ## Installation
 
 1. Clone this repository:
